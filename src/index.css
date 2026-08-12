@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-hh-green: #105935;
+  --color-hh-yellow: #ffd900;
+  --color-hh-pink: #ff007f;
+  --color-hh-cream: #f8f4e6;
+  
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-hh-green);
+    color: var(--color-hh-cream);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
