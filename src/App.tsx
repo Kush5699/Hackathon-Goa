@@ -7,8 +7,26 @@ import { HackerBackground } from './components/HackerBackground';
 import { ScrambleText } from './components/ScrambleText';
 import { generateTitle, STACKS } from './data';
 
+const HERO_QUOTES = [
+  "✦ NO SAFETY NETS. JUST RAW EXECUTION. ✦",
+  "✦ SALT IN THE AIR. ROOT ACCESS GRANTED. ✦",
+  "✦ HIGH TIDE. DEEP WORK. ✦",
+  "✦ DROP THE EGO. WRITE THE CODE. ✦",
+  "✦ ZERO LATENCY. TOTAL FOCUS. ✦"
+];
+
 export default function App() {
   const [isStarted, setIsStarted] = useState(false);
+  const [heroQuoteIndex, setHeroQuoteIndex] = useState(0);
+
+  useEffect(() => {
+    if (isStarted) return;
+    const interval = setInterval(() => {
+      setHeroQuoteIndex((prev) => (prev + 1) % HERO_QUOTES.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isStarted]);
+
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null);
 
   const [name, setName] = useState('');
@@ -147,10 +165,10 @@ export default function App() {
               <br/>
               <span className="text-hh-yellow italic"><ScrambleText text="More Signal." /></span>
             </h2>
-            <p className="text-hh-cream/90 font-mono text-lg md:text-xl max-w-lg mb-12 cursor-default">
-              4 Days. One Rhythm. Everything Intentional.<br/>
+            <p className="text-hh-cream/90 font-mono text-lg md:text-xl max-w-lg mb-12 cursor-default min-h-[80px]">
+              <ScrambleText text="An isolated sandbox for top-tier engineers." /><br/>
               <span className="text-hh-pink uppercase tracking-widest text-sm mt-4 block">
-                <ScrambleText text="✦ Heads down. Ship or ship. ✦" />
+                <ScrambleText text={HERO_QUOTES[heroQuoteIndex]} />
               </span>
             </p>
             <motion.button 

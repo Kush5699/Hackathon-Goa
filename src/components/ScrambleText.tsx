@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface ScrambleTextProps {
   text: string;
@@ -7,26 +7,30 @@ interface ScrambleTextProps {
 
 export const ScrambleText: React.FC<ScrambleTextProps> = ({ text, className }) => {
   const [displayText, setDisplayText] = useState(text);
-  const [isHovering, setIsHovering] = useState(false);
-  const originalText = useRef(text);
+  const [isScrambling, setIsScrambling] = useState(false);
   
   // Hacker-ish characters for the noise
   const chars = '!<>-_\\\\/[]{}—=+*^?#_01';
+
+  // Trigger scramble when the target text changes
+  useEffect(() => {
+    setIsScrambling(true);
+  }, [text]);
 
   useEffect(() => {
     let frame: number;
     let iteration = 0;
 
-    if (isHovering) {
+    if (isScrambling) {
       const scramble = () => {
         setDisplayText((prev) => 
-          prev.split('').map((char, index) => {
+          text.split('').map((char, index) => {
             // Don't scramble spaces
-            if (originalText.current[index] === ' ') return ' ';
+            if (char === ' ') return ' ';
             
             // If the iteration has passed this index, reveal the true character
             if (index < iteration) {
-              return originalText.current[index];
+              return text[index];
             }
             
             // Otherwise, show noise
@@ -35,8 +39,8 @@ export const ScrambleText: React.FC<ScrambleTextProps> = ({ text, className }) =
         );
 
         // Speed of the reveal (lower is slower)
-        if (iteration >= originalText.current.length) {
-          setIsHovering(false);
+        if (iteration >= text.length) {
+          setIsScrambling(false);
           return;
         }
 
@@ -45,15 +49,15 @@ export const ScrambleText: React.FC<ScrambleTextProps> = ({ text, className }) =
       };
       frame = requestAnimationFrame(scramble);
     } else {
-      setDisplayText(originalText.current);
+      setDisplayText(text);
     }
 
     return () => cancelAnimationFrame(frame);
-  }, [isHovering]);
+  }, [isScrambling, text]);
 
   return (
     <span 
-      onMouseEnter={() => setIsHovering(true)}
+      onMouseEnter={() => setIsScrambling(true)}
       className={`inline-block cursor-crosshair ${className || ''}`}
     >
       {displayText}
