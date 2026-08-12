@@ -99,34 +99,23 @@ export default function App() {
       const blob = await canvasRef.current.getBlob();
       if (!blob) throw new Error("Could not generate image");
 
-      const file = new File([blob], 'hhgoa-builder-id.png', { type: 'image/png' });
-      const shareData = {
-        text: "I'm building at Hacker House Goa 2026 \ud83c\udf34\ud83d\udcbb #FrameInGoa",
-        files: [file],
-      };
-
-      // Try native share first
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share(shareData);
-      } else {
-        // Fallback: upload to backend, then open X intent
-        const formData = new FormData();
-        formData.append('image', blob, 'builder-id.png');
-        
-        const response = await fetch('/api/share', {
-          method: 'POST',
-          body: formData,
-        });
-        
-        if (!response.ok) throw new Error("Failed to upload to server");
-        
-        const { id } = await response.json();
-        const shareUrl = `${window.location.origin}/s/${id}`;
-        
-        const tweetText = encodeURIComponent(`I'm building at Hacker House Goa 2026 \ud83c\udf34\ud83d\udcbb #FrameInGoa\n\n`);
-        const twitterIntent = `https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`;
-        window.open(twitterIntent, '_blank');
-      }
+      // Upload to backend, then open X intent directly
+      const formData = new FormData();
+      formData.append('image', blob, 'builder-id.png');
+      
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) throw new Error("Failed to upload to server");
+      
+      const { id } = await response.json();
+      const shareUrl = `${window.location.origin}/s/${id}`;
+      
+      const tweetText = encodeURIComponent(`I'm building at Hacker House Goa 2026 🌴💻 #FrameInGoa\n\n`);
+      const twitterIntent = `https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterIntent, '_blank');
     } catch (error) {
       console.error('Share failed', error);
       alert('Sharing failed. You can always download the image and share it manually!');
